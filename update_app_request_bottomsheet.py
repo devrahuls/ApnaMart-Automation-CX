@@ -5,7 +5,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 
 
-def remove_update_app_bottomsheet(wait):
+def remove_update_app_bottomsheet(driver):
+
+    wait = WebDriverWait(driver, 5)
+
     # If Update app request bottomsheet appears
     try:
         update_heading_id = wait.until(

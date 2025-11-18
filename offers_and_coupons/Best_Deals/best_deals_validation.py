@@ -1,3 +1,4 @@
+from logging import exception
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common import NoSuchElementException, TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
@@ -446,6 +447,63 @@ def add_more_products_to_unlock(wait):
     view_cart(wait)
 
 
+def offer_card_bottomsheet_from_cart(driver, wait):
+    """
+        Checks for Unlocked, Locked, or Sold states and calls the respective function ot check verify their bottomsheet from outside
+    """
+
+    CHOOSE_ITEMS_ID = "com.apnamart.apnaconsumer:id/btn_choose_items"
+    ADD_PRODUCTS_ID = "com.apnamart.apnaconsumer:id/btn_add_products"
+
+    # We use find_elements() which returns a list.
+    # If the list length is > 0, the element exists.
+
+    # --- State 1: Check for Unlocked 'btn_choose_items' ---
+    try:
+        unlocked_buttons = driver.find_elements(AppiumBy.ID, CHOOSE_ITEMS_ID)
+    except NoSuchElementException:
+        unlocked_buttons = []  # Ensure list is empty if driver has an issue
+
+    if len(unlocked_buttons) > 0:
+        print("✅ STATE: Found 'btn_choose_items'.")
+        verify_unlocked_bestdeals_bottomsheet_verification(driver, wait)
+        return  # Found state, job is done.
+
+    # --- State 2: Check for Locked/Sold 'btn_add_products' ---
+    print(f"ℹ️ 'btn_choose_items' not found. Checking for '{ADD_PRODUCTS_ID}'...")
+
+    try:
+        locked_or_sold_buttons = driver.find_elements(AppiumBy.ID, ADD_PRODUCTS_ID)
+    except NoSuchElementException:
+        locked_or_sold_buttons = []
+
+    if len(locked_or_sold_buttons) > 0:
+        # Found the button. Get text from the first one.
+        button_text = locked_or_sold_buttons[0].text.upper()
+
+        if button_text == "LOCKED":
+            print("✅ STATE: Found 'btn_add_products' with text 'LOCKED'.")
+            verify_locked_bestdeal_bottomsheet(wait)
+
+        elif button_text == "SOLD":
+            print("✅ STATE: Found 'btn_add_products' with text 'SOLD'.")
+            verify_oos_bestdeal_bottomsheet(wait)
+
+        else:
+            # Found the button, but the text is unexpected
+            print(f"❌ FAILED: Found '{ADD_PRODUCTS_ID}', but text was '{button_text}'.")
+            raise AssertionError(f"Unexpected button text: {button_text}")
+
+    else:
+        # --- State 3: Failure (Neither button found) ---
+        print("\n" + "=" * 30)
+        print("❌ FAILED: FINAL REPORT")
+        print("   -> Could not find 'btn_choose_items'")
+        print(f"   -> Could not find 'btn_add_products'")
+        print("=" * 30 + "\n")
+        raise AssertionError("No valid action button found on screen.")
+
+
 # Main function to run all the flow
 def best_deals_validate_main(driver, wait):
     deals_heading = wait.until(
@@ -481,7 +539,12 @@ def best_deals_validate_main(driver, wait):
             offer_card.click()
             print('✅ Opening the Offer Bottomsheet')
 
-            offer_card_bottomsheet_from_cart(wait)
+            # if view all button does not found, means we have only one offer to check, verify, and apply.
+            try:
+                offer_card_bottomsheet_from_cart(driver, wait)
+            except exception as e:
+                print(f'Test failed: {e}')
+
 
         except TimeoutException:
             # This is a critical failure: *neither* element was found.

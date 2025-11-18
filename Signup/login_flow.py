@@ -9,7 +9,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 import time
 
 
-def login_flow(wait):
+def login_flow(driver, wait):
     try:
         # Location permission
         location_grant_access = wait.until(
@@ -26,7 +26,7 @@ def login_flow(wait):
         language_selection_button.click()
 
         # remove the update request bottomsheet
-        remove_update_app_bottomsheet(wait)
+        remove_update_app_bottomsheet(driver)
 
         # Truecaller flow
         try:
@@ -82,7 +82,7 @@ def login_flow(wait):
         )
         notification_permission_btn.click()
 
-        remove_update_app_bottomsheet(wait)
+        remove_update_app_bottomsheet(driver)
 
         print("✅ Login flow completed.")
 

@@ -17,7 +17,7 @@ if __name__ == "__main__":
     wait = get_wait(driver)
 
     # Run whichever flows you want
-    login_flow(wait)  #MUST
+    login_flow(driver, wait)  #MUST
 
     # address = input("Enter address: ")
     store_assignment(driver, wait, "apnamart corporate office")

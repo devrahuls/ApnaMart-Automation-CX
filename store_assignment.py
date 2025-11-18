@@ -46,7 +46,7 @@ def store_assignment(driver, wait, address):
             confirm_address_btn.click()
 
         # remove the update request bottomsheet
-        remove_update_app_bottomsheet(wait)
+        remove_update_app_bottomsheet(driver)
 
 
 
