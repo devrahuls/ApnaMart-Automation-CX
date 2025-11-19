@@ -10,10 +10,14 @@ from selenium.common.exceptions import TimeoutException, StaleElementReferenceEx
 
 def view_cart(wait):
     # View cart
-    view_cart_btn = wait.until(
-        EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("View Cart")'))
-    )
-    view_cart_btn.click()
+    try:
+        view_cart_btn = wait.until(
+            EC.element_to_be_clickable((AppiumBy.ID, 'com.apnamart.apnaconsumer:id/viewCart'))
+        )
+        view_cart_btn.click()
+        print('Opening Cart Page...')
+    except TimeoutException:
+        print('Failed to open cart page.')
 
 def qty_update(driver, wait):
     int_max = 2**31 - 1

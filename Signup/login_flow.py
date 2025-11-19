@@ -76,6 +76,8 @@ def login_flow(driver, wait):
             )
             otp_input.send_keys("432967")
 
+        time.sleep(1)
+
         # Notifications
         notification_permission_btn = wait.until(
             EC.element_to_be_clickable((AppiumBy.ID, "com.android.permissioncontroller:id/permission_allow_button"))

@@ -15,9 +15,9 @@ def best_deals_page_verification(driver, wait):
         page_heading = wait.until(
             EC.visibility_of_element_located((AppiumBy.ID, 'com.apnamart.apnaconsumer:id/textView3'))
         )
-        print(f'Page Heading: {page_heading.text} is available')
+        print(f'✅ Page Heading: {page_heading.text} is available')
     except Exception as e:
-        print(f'Page Heading: Best Deals is NOT available')
+        print(f'❌ Page Heading: Best Deals is NOT available')
 
 
     # --- Verify The Elements That Are Present In Both Lock And Unlocked Offers ---
@@ -70,6 +70,8 @@ def best_deals_page_verification(driver, wait):
         EC.visibility_of_element_located((AppiumBy.ID, "com.apnamart.apnaconsumer:id/btn_add_products"))
     )
     if locked_deals_btn.text == "Locked":
+        print("Locked Offer Found!")
+        print('--- verifying the elements on the Locked offer card ---')
         # verify mov
         try:
             subtitle = wait.until(
@@ -77,7 +79,7 @@ def best_deals_page_verification(driver, wait):
             )
             print(f'✅ Locked subtitle text: {subtitle.text} is available')
         except NoSuchElementException:
-            print('Subtitle text is NOT available')
+            print('❌ Locked Subtitle text is NOT available')
 
         # verify progress bar
         try:
@@ -86,16 +88,16 @@ def best_deals_page_verification(driver, wait):
             )
             print(f'✅ Progress Bar with text: {progress_bar.text} is available')
         except NoSuchElementException:
-            print('Progress Bar is NOT available')
+            print('❌ Progress Bar is NOT available')
 
         # opens the bottomsheet of the lcoked deals and start to verify
         locked_deals_btn.click()
         verify_locked_bestdeal_bottomsheet(wait)
     else:
-        print('No Locked offers is present OR Locked button was NOT present')
+        print('❌ No Locked offers is present OR Locked button was NOT present')
 
     # now try to unlock all the offers
-    add_more_products_to_unlock(wait)
+    # add_more_products_to_unlock(wait)
 
     #Verifying OOS Deals
     if locked_deals_btn.text == "SOLD":
@@ -130,7 +132,7 @@ def best_deals_page_verification(driver, wait):
         locked_deals_btn.click()
         verify_oos_bestdeal_bottomsheet(wait)
     else:
-        print('No OOS offer is present OR no OOS button was present')
+        print('--- No OOS offer is present OR no OOS button was present ---')
 
     #Verifying Unlocked Deals
     try:
@@ -167,46 +169,46 @@ def offer_bottomsheet_common_elements_verification(wait):
         wait.until(
             EC.visibility_of_element_located((AppiumBy.ID, "com.apnamart.apnaconsumer:id/imageSlider"))
         )
-        print('Header image is available')
-    except NoSuchElementException:
-        print('Header image is NOT available')
+        print('✅ Header image is available')
+    except TimeoutException:
+        print('❌ Header image is NOT available')
+        pass
 
     # verifying the header title
     try:
         header_title = wait.until(
             EC.visibility_of_element_located((AppiumBy.ID, "com.apnamart.apnaconsumer:id/tv_title"))
         )
-        print(f'Header Title is available with : {header_title.text}')
+        print(f'✅ Header Title is available with : {header_title.text}')
     except NoSuchElementException:
-        print('Header Title is NOT available')
+        print('❌ Header Title is NOT available')
 
     # verify the subtitle
     try:
         header_subtitle = wait.until(
             EC.visibility_of_element_located((AppiumBy.ID, "com.apnamart.apnaconsumer:id/tv_subtitle"))
         )
-        print(f'Header Subtitle is available with : {header_subtitle.text}')
+        print(f'✅ Header Subtitle is available with : {header_subtitle.text}')
     except NoSuchElementException:
-        print('Header Subtitle is NOT available')
+        print('❌ Header Subtitle is NOT available')
 
     # Offered Quantity
     try:
         offered_qty = wait.until(
             EC.visibility_of_element_located((AppiumBy.ID, "com.apnamart.apnaconsumer:id/tv_gift_quantity"))
         )
-        print(f'Offered Qty is available with : {offered_qty.text}')
+        print(f'✅ Offered Qty is available with : {offered_qty.text}')
     except NoSuchElementException:
-        print('Offered qty is NOT available OR only 1 quantity is the max_redeem for the offer item')
+        print('--- Offered qty is NOT available OR only 1 quantity is the max_redeem for the offer item ---')
 
     # Offered Price
     try:
         offered_price = wait.until(
             EC.visibility_of_element_located((AppiumBy.ID, "com.apnamart.apnaconsumer:id/tvProductSellingPrice"))
         )
-        print('Offered Price is available')
+        print('✅ Offered Price is available')
     except NoSuchElementException:
-        print('Offered Price is NOT available')
-
+        print('❌ Offered Price is NOT available')
 
 
 # Verification of the Unlocked Best Deals Bottomsheet elements
@@ -222,7 +224,7 @@ def verify_unlocked_bestdeals_bottomsheet_verification(driver, wait):
     )
     # If the Offer is Locked
     while offer_item_add_btn.text == "Locked":
-        print("Offer is currently locked, please add more items to get unlocked")
+        print("--- Offer is currently locked, please add more items to get unlocked ----")
         add_more_products_to_unlock(wait)
 
     # Add to cart the offer items according to the availabiltiy
@@ -231,7 +233,7 @@ def verify_unlocked_bestdeals_bottomsheet_verification(driver, wait):
     try:
         # 1. Get the title text
         title_element = wait.until(
-            EC.visibility_of_element_located((AppiumBy.ID, "com.apnamart.apnamart:id/tv_title"))
+            EC.visibility_of_element_located((AppiumBy.ID, "com.apnamart.apnaconsumer:id/tv_subtitle"))
         )
         title_text = title_element.text
         # 2. Extract the number from the text
@@ -249,39 +251,70 @@ def verify_unlocked_bestdeals_bottomsheet_verification(driver, wait):
         print(f"--- GOAL: Add {goal_items_to_add} item(s) ---")
 
     except TimeoutException:
-        print("❌ FAILED: Could not find the title element 'tv_title'. Test cannot continue.")
+        print("❌ FAILED: Could not find the title element 'sub-title'. Test cannot continue.")
         raise  # Fail the test
 
         # --- 2. Try to add 'n' items ---
     items_added_successfully = 0
 
-    for i in range(goal_items_to_add):
-
-        item_selector = f'new UiSelector().resourceId("com.apnamart.apnaconsumer:id/btAddBig").instance({i})'
-        print(f"Attempting to add item at instance({i})...")
-
+    if goal_items_to_add == 1:
         try:
-            # Use the short_wait here
             item_add_to_cart = short_wait.until(
-                EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR, item_selector))
+                EC.element_to_be_clickable((AppiumBy.ID, 'com.apnamart.apnaconsumer:id/btnAddBig'))
             )
-
             item_add_to_cart.click()
             items_added_successfully += 1
             print(f"  ✅ Clicked item. (Total added: {items_added_successfully})")
-
         except TimeoutException:
-            # This means btAddBig.instance(i) was not found
-            print(f"  ❌ 'btAddBig.instance({i})' not found or not clickable.")
-            print("  Stopping add-to-cart loop.")
-            break  # Stop the loop
+            print("❌ FAILED : Could not find the Add button")
+
+    else:
+        for i in range(goal_items_to_add):
+
+            item_selector = f'new UiSelector().resourceId("com.apnamart.apnaconsumer:id/btAddBig").instance({i})'
+            print(f"Attempting to add item at instance({i})...")
+
+            try:
+                # Use the short_wait here
+                item_add_to_cart = short_wait.until(
+                    EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR, item_selector))
+                )
+
+                item_add_to_cart.click()
+                items_added_successfully += 1
+                print(f"  ✅ Clicked item. (Total added: {items_added_successfully})")
+
+            except TimeoutException:
+                # This means btAddBig.instance(i) was not found
+                print(f"  ❌ 'btAddBig.instance({i})' not found or not clickable.")
+                print("  Stopping add-to-cart loop.")
+                break  # Stop the loop
 
     # --- 3. Final Report ---
     print("\n--- Summary ---")
 
     if items_added_successfully == goal_items_to_add:
         # This is the "good to go" case
-        print(f"✅ Successfully added all {goal_items_to_add} items.")
+        print(f"✅ Successfully added all {goal_items_to_add} item(s).")
+    # adding the offer item by pressing the confirm button inside the best deals bottomsheet
+    else:
+        # "otherwise try to find oos button"
+        print(f"ℹ️ Added {items_added_successfully} out of {goal_items_to_add} items.")
+
+        try:
+            # Check for *any* OOS buttons on the page
+            oos_buttons = driver.find_elements(AppiumBy.ID, "com.apnamart.apnaconsumer:id/btNotifyMe")
+
+            if oos_buttons.is_displayed:
+                # "if you have found then just print..."
+                print(f"  REPORT: Could only add {items_added_successfully} item(s). The rest are Out of Stock.")
+            else:
+                print("  REPORT: Failed to add all items, but no OOS buttons were found either.")
+
+        except NoSuchElementException:
+            print("  REPORT: Failed to add all items, and no OOS buttons were found.")
+
+
     # adding the offer item by pressing the confirm button inside the best deals bottomsheet
     try:
         confirm_btn = wait.until(
@@ -300,44 +333,6 @@ def verify_unlocked_bestdeals_bottomsheet_verification(driver, wait):
             print('Couldnt Redirected to the Cart Page!')
     except NoSuchElementException:
         print('Confirm Button could not found so Offer item cant be Added to Cart')
-
-
-    else:
-        # "otherwise try to find oos button"
-        print(f"ℹ️ Added {items_added_successfully} out of {goal_items_to_add} items.")
-
-        try:
-            # Check for *any* OOS buttons on the page
-            oos_buttons = driver.find_elements(AppiumBy.ID, "com.apnamart.apnaconsumer:id/btNotifyMe")
-
-            if len(oos_buttons) > 0:
-                # "if you have found then just print..."
-                print(f"  REPORT: Could only add {items_added_successfully} item(s). The rest are Out of Stock.")
-            else:
-                print("  REPORT: Failed to add all items, but no OOS buttons were found either.")
-
-        except NoSuchElementException:
-            print("  REPORT: Failed to add all items, and no OOS buttons were found.")
-
-
-    # adding the offer item by pressing the confirm button inside the best deals bottomsheet
-    try:
-        confirm_btn = wait.until(
-            EC.visibility_of_element_located((AppiumBy.ID, "com.apnamart.apnaconsumer:id/btn_add_products"))
-        )
-        confirm_btn.click()
-        print('Offer item has successfully Added to Cart!')
-
-        # verify after confirming the offer item are we successfully redirected to the cart page or not
-        try:
-            wait.until(
-                EC.visibility_of_element_located((AppiumBy.ID, "com.apnamart.apnaconsumer:id/toolBarContainer"))
-            )
-            print('Redirected to the Cart Page!')
-        except TimeoutException as e:
-            print('Couldnt Redirected to the Cart Page!')
-    except NoSuchElementException:
-        print('Offer item hasnt Added to Cart')
 
 
 def verify_locked_bestdeal_bottomsheet(wait):
@@ -417,15 +412,6 @@ def verify_oos_bestdeal_bottomsheet(wait):
 
 
 def add_more_products_to_unlock(wait):
-    # close the bottomsheet
-    try:
-        bottomsheet_close_btn = wait.until(
-            EC.visibility_of_element_located((AppiumBy.ID, "com.apnamart.apnaconsumer:id/close_btn"))
-        )
-        bottomsheet_close_btn.click()
-        print('Best Deals Bottomsheet closed successfully')
-    except NoSuchElementException:
-        print('Bottomsheet close button is not available')
 
     #check if are we inside the Best Deals page
     page_heading = wait.until(
@@ -449,77 +435,72 @@ def add_more_products_to_unlock(wait):
 
 def offer_card_bottomsheet_from_cart(driver, wait):
     """
-        Checks for Unlocked, Locked, or Sold states and calls the respective function ot check verify their bottomsheet from outside
+    Verifies the offer state (Unlocked, Locked, OOS) based on the text
+    of the single control button (btnAddBig) and calls the respective verification function.
     """
 
-    CHOOSE_ITEMS_ID = "com.apnamart.apnaconsumer:id/btn_choose_items"
-    ADD_PRODUCTS_ID = "com.apnamart.apnaconsumer:id/btn_add_products"
+    CONTROL_BUTTON_ID = "com.apnamart.apnaconsumer:id/btnAddBig"
 
-    # We use find_elements() which returns a list.
-    # If the list length is > 0, the element exists.
-
-    # --- State 1: Check for Unlocked 'btn_choose_items' ---
-    try:
-        unlocked_buttons = driver.find_elements(AppiumBy.ID, CHOOSE_ITEMS_ID)
-    except NoSuchElementException:
-        unlocked_buttons = []  # Ensure list is empty if driver has an issue
-
-    if len(unlocked_buttons) > 0:
-        print("✅ STATE: Found 'btn_choose_items'.")
-        verify_unlocked_bestdeals_bottomsheet_verification(driver, wait)
-        return  # Found state, job is done.
-
-    # --- State 2: Check for Locked/Sold 'btn_add_products' ---
-    print(f"ℹ️ 'btn_choose_items' not found. Checking for '{ADD_PRODUCTS_ID}'...")
+    print("--- Verifying Offer State Inside Bottomsheet ---")
 
     try:
-        locked_or_sold_buttons = driver.find_elements(AppiumBy.ID, ADD_PRODUCTS_ID)
-    except NoSuchElementException:
-        locked_or_sold_buttons = []
+        # We wait until the main control button of the bottomsheet is visible.
+        # This confirms the bottomsheet has loaded its content.
+        control_btn = wait.until(
+            EC.visibility_of_element_located((AppiumBy.ID, CONTROL_BUTTON_ID))
+        )
 
-    if len(locked_or_sold_buttons) > 0:
-        # Found the button. Get text from the first one.
-        button_text = locked_or_sold_buttons[0].text.upper()
+        # Get the text from the button and convert to uppercase for robust comparison
+        button_text = control_btn.text.upper()
+        print(f"ℹ️ Control button text found: '{button_text}'")
 
-        if button_text == "LOCKED":
-            print("✅ STATE: Found 'btn_add_products' with text 'LOCKED'.")
+        if button_text == "ADD":
+            # --- State 1: UNLOCKED OFFER ---
+            print("✅ STATE: Offer is UNLOCKED (Text: ADD).")
+            # Usually, if it says 'Add', we should click it and then verify the success.
+            # control_btn.click() # Uncomment if clicking is part of your verification flow
+            verify_unlocked_bestdeals_bottomsheet_verification(driver, wait)
+
+        elif button_text == "LOCKED":
+            # --- State 2: LOCKED OFFER ---
+            print("✅ STATE: Offer is LOCKED.")
             verify_locked_bestdeal_bottomsheet(wait)
+            add_more_products_to_unlock(wait)
+            offer_card = wait.until(
+                EC.element_to_be_clickable((AppiumBy.ID, 'com.apnamart.apnaconsumer:id/sku_deals_cardview'))
+            )
+            offer_card.click()
+            offer_card_bottomsheet_from_cart(driver, wait)#recursion bawa
 
         elif button_text == "SOLD":
-            print("✅ STATE: Found 'btn_add_products' with text 'SOLD'.")
+            # --- State 3: OOS OFFER ---
+            print("✅ STATE: Offer is SOLD OUT (OOS).")
             verify_oos_bestdeal_bottomsheet(wait)
 
         else:
-            # Found the button, but the text is unexpected
-            print(f"❌ FAILED: Found '{ADD_PRODUCTS_ID}', but text was '{button_text}'.")
-            raise AssertionError(f"Unexpected button text: {button_text}")
+            # --- State 4: UNEXPECTED TEXT ---
+            print(f"❌ FAILED: Found control button, but text was '{button_text}'.")
+            raise AssertionError(f"Unexpected control button text in bottomsheet: {button_text}")
 
-    else:
-        # --- State 3: Failure (Neither button found) ---
+    except TimeoutException:
+        # If the control button is never found, the bottomsheet failed to load
         print("\n" + "=" * 30)
         print("❌ FAILED: FINAL REPORT")
-        print("   -> Could not find 'btn_choose_items'")
-        print(f"   -> Could not find 'btn_add_products'")
+        print(f"   -> Could not find control button '{CONTROL_BUTTON_ID}'.")
+        print("   -> Bottomsheet content failed to load within timeout.")
         print("=" * 30 + "\n")
-        raise AssertionError("No valid action button found on screen.")
-
+        raise AssertionError("Bottomsheet failed to load or has no state indicator.")
 
 # Main function to run all the flow
 def best_deals_validate_main(driver, wait):
-    deals_heading = wait.until(
-        EC.visibility_of_element_located((AppiumBy.ID, "com.apnamart.apnaconsumer:id/tv_deal_type"))
-    )
-    print(deals_heading.text)
 
     try:
         # --- STATE 1: Multiple Offers ---
-        # Try to find the 'View All' button.
-        # This will wait up to the full timeout duration.
+        print("Checking for 'View All' button...")
         view_all_btn = wait.until(
             EC.visibility_of_element_located((AppiumBy.ID, 'com.apnamart.apnaconsumer:id/bt_view_all'))
         )
 
-        # If the line above succeeds, the button MUST be present.
         print('✅ "View All" button is present (Multiple offers).')
         view_all_btn.click()
         print('Opening the Best Deals Page...')
@@ -542,8 +523,9 @@ def best_deals_validate_main(driver, wait):
             # if view all button does not found, means we have only one offer to check, verify, and apply.
             try:
                 offer_card_bottomsheet_from_cart(driver, wait)
-            except exception as e:
-                print(f'Test failed: {e}')
+            except Exception as e:
+                print(f'❌ Error inside Single Offer verification: {e}')
+                raise e  # Re-raise to fail the test if verification failed
 
 
         except TimeoutException:

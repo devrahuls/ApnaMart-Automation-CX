@@ -10,6 +10,24 @@ def search_and_add_to_cart_flow(wait, item_name):
     # com.apnamart.apnaconsumer: id / layout_top
     # com.apnamart.apnaconsumer: id / mast_head_top
 
+    time.sleep(2)
+
+    # --- 1. THE FIX: ADD THIS STABILITY WAIT ---
+    # This block waits for a stable homepage element *before*
+    # doing anything else.
+    try:
+        print("Waiting for homepage to be ready...")
+        # Use a stable, static element ID from your homepage
+        wait.until(
+            EC.presence_of_element_located((AppiumBy.ID, "com.apnamart.apnaconsumer:id/masthead_top"))
+        )
+        print("✅ Homepage is stable.")
+
+    except TimeoutException:
+        print("🛑 Homepage never loaded or stable element not found. Stopping.")
+        raise  # Fail the test if the homepage isn't stable
+    # --- END OF FIX ---
+
     try:
         # Search for item
         search_bar = wait.until(EC.element_to_be_clickable((AppiumBy.ID,
@@ -38,6 +56,11 @@ def search_and_add_to_cart_flow(wait, item_name):
             EC.element_to_be_clickable((AppiumBy.ID, "com.apnamart.apnaconsumer:id/back_button"))
         )
         back_btn_to_homepage.click()
+        print("Clicked 'back'. Waiting for homepage to reload...")
+        wait.until(
+            EC.presence_of_element_located((AppiumBy.ID, "com.apnamart.apnaconsumer:id/masthead_top"))
+        )
+        print("✅ Homepage is stable again")
     except NoSuchElementException:
         print("No back button found")
 

@@ -1,6 +1,6 @@
 from cart_page.view_cart import view_cart, qty_update, qty_updatee, verify_empty_cart
 from driver_setup import get_driver, get_wait
-from Signup.login_flow import login_flow
+from Signup.login_flow import login_flow, custom_login
 from offers_and_coupons.Best_Deals.best_deals_main import best_deals_main
 from search_and_browse.search_and_add_to_cart_flow import search_and_add_to_cart_flow
 from store_assignment import store_assignment
@@ -18,6 +18,7 @@ if __name__ == "__main__":
 
     # Run whichever flows you want
     login_flow(driver, wait)  #MUST
+    # custom_login(driver,wait)
 
     # address = input("Enter address: ")
     store_assignment(driver, wait, "apnamart corporate office")
@@ -26,7 +27,7 @@ if __name__ == "__main__":
 
     # category_navigation_main(driver, wait)
 
-    item_name = 'shampoo'
+    item_name = 'murmure'
     search_and_add_to_cart_flow(wait, item_name)
     view_cart(wait)
     best_deals_main(driver, wait)
