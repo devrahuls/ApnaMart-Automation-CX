@@ -10,9 +10,8 @@ def search_and_add_to_cart_flow(wait, item_name):
     # com.apnamart.apnaconsumer: id / layout_top
     # com.apnamart.apnaconsumer: id / mast_head_top
 
-    time.sleep(2)
+    time.sleep(5)
 
-    # --- 1. THE FIX: ADD THIS STABILITY WAIT ---
     # This block waits for a stable homepage element *before*
     # doing anything else.
     try:

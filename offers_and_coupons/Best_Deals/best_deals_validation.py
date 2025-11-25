@@ -6,7 +6,7 @@ from appium.webdriver.common.appiumby import AppiumBy
 import re
 from cart_page.view_cart import view_cart
 from search_and_browse.search_and_add_to_cart_flow import search_and_add_to_cart_flow
-
+from offers_and_coupons.Best_Deals.best_deals_application import verify_offer_price_qty_inside_carts
 
 
 def best_deals_page_verification(driver, wait):
@@ -211,6 +211,29 @@ def offer_bottomsheet_common_elements_verification(wait):
         print('❌ Offered Price is NOT available')
 
 
+def get_product_names_from_bottomsheet(driver, wait):
+    """Gathers all product names listed inside the bottomsheet."""
+
+    PRODUCT_NAME_ID = "com.apnamart.apnaconsumer:id/productName"
+    product_names_list = []
+
+    try:
+        # Find all matching elements using the base ID
+        product_elements = driver.find_elements(AppiumBy.ID, PRODUCT_NAME_ID)
+
+        for element in product_elements:
+            name = element.text
+            if name:
+                product_names_list.append(name)
+
+        return product_names_list
+
+    except Exception as e:
+        print(f"❌ Error gathering product names: {e}")
+        return []
+
+
+
 # Verification of the Unlocked Best Deals Bottomsheet elements
 def verify_unlocked_bestdeals_bottomsheet_verification(driver, wait):
 
@@ -271,7 +294,7 @@ def verify_unlocked_bestdeals_bottomsheet_verification(driver, wait):
     else:
         for i in range(goal_items_to_add):
 
-            item_selector = f'new UiSelector().resourceId("com.apnamart.apnaconsumer:id/btAddBig").instance({i})'
+            item_selector = f'new UiSelector().resourceId("com.apnamart.apnaconsumer:id/btnAddBig").instance({i})'
             print(f"Attempting to add item at instance({i})...")
 
             try:
@@ -289,6 +312,10 @@ def verify_unlocked_bestdeals_bottomsheet_verification(driver, wait):
                 print(f"  ❌ 'btAddBig.instance({i})' not found or not clickable.")
                 print("  Stopping add-to-cart loop.")
                 break  # Stop the loop
+
+    # --- GATHER PRODUCT NAMES ---
+    all_product_names = get_product_names_from_bottomsheet(driver, wait)
+    print("\n📦 Captured Products:", all_product_names)
 
     # --- 3. Final Report ---
     print("\n--- Summary ---")
@@ -328,7 +355,17 @@ def verify_unlocked_bestdeals_bottomsheet_verification(driver, wait):
             wait.until(
                 EC.visibility_of_element_located((AppiumBy.ID, "com.apnamart.apnaconsumer:id/toolBarContainer"))
             )
+            try:
+                print('I am trying...')
+                cart_product_elements = driver.find_elements(AppiumBy.ID, "com.apnamart.apnaconsumer:id/product name")
+                for cart_element in cart_product_elements:
+                    cart_name = cart_element.text.strip()
+                    print(cart_name)
+            except TimeoutException:
+                print("  REPORT: Failed to find product name on the cart bhai.")
+
             print('Successfully Redirected to the Cart Page!')
+            # verify_offer_price_qty_inside_carts(driver, wait, all_product_names, items_added_successfully)
         except TimeoutException as e:
             print('Couldnt Redirected to the Cart Page!')
     except NoSuchElementException:
