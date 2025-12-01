@@ -18,6 +18,7 @@ if __name__ == "__main__":
     driver = get_driver()
     wait = get_wait(driver)
 
+
     # Run whichever flows you want
     login_flow(driver, wait)  #MUST
     # custom_login(driver,wait)

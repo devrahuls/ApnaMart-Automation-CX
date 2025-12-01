@@ -26,12 +26,12 @@ def _perform_swipe(driver):
         print(f"⚠️ Warning: Could not perform swipe. Driver error: {e}")
 
 
-def scroll_down_to_find_an_element(driver, target_name, max_swipes):
+def scroll_down_to_find_an_element(driver, target_name_id, max_swipes):
     """
     Scrolls down the screen until an element with the 'btn_add_products' ID is found,
     or until the end of the page is reached.
     """
-    print(f"Searching for element : {target_name}")
+    print(f"Searching for element : {target_name_id}")
 
     previous_page_source = ""
 
@@ -40,7 +40,7 @@ def scroll_down_to_find_an_element(driver, target_name, max_swipes):
 
         # 1. CHECK FOR THE ELEMENT
         # We use find_elements() which returns a list (non-failing check)
-        element = driver.find_elements(AppiumBy.ID, target_name)
+        element = driver.find_elements(AppiumBy.ID, target_name_id)
 
         if element.is_displayed:
             print(f"✅ SUCCESS! Found button on the current screen (State: {element.text.upper()}).")

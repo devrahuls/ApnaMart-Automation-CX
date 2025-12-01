@@ -214,12 +214,11 @@ def offer_bottomsheet_common_elements_verification(wait):
 def get_product_names_from_bottomsheet(driver, wait):
     """Gathers all product names listed inside the bottomsheet."""
 
-    PRODUCT_NAME_ID = "com.apnamart.apnaconsumer:id/productName"
     product_names_list = []
 
     try:
         # Find all matching elements using the base ID
-        product_elements = driver.find_elements(AppiumBy.ID, PRODUCT_NAME_ID)
+        product_elements = driver.find_elements(AppiumBy.ID, "com.apnamart.apnaconsumer:id/productName")
 
         for element in product_elements:
             name = element.text

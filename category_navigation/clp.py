@@ -9,26 +9,45 @@ def horizontal_scroll_category_pane(driver, wait, text):
     """
         Scroll horizontally on category pane until an element with given text is found.
     """
-    window_size = driver.get_window_size()
-    width = window_size["width"]
-    height = window_size["height"]
+    # window_size = driver.get_window_size()
+    # width = window_size["width"]
+    # height = window_size["height"]
+    #
+    # start_x = int(width * 0.8) #right part of the screen
+    # end_x = int(width * 0.2) #left part of the screen
+    # y = int(height * 0.25) #height of the screen from top
+    #
+    # max_swipes = 7 #maximum number of swipes to be done.
+    #
+    # for i in range(max_swipes):
+    #     try:
+    #         el = driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR, f'new UiSelector().text("{text}")')
+    #         return wait.until(EC.visibility_of(el))
+    #     except NoSuchElementException:
+    #         # Swipe right
+    #         driver.swipe(start_x, y, end_x, y, 800)
+    #
+    #
+    # raise Exception(f"Element with text '{text}' not found after {max_swipes} swipes")
+    """
+        Uses Android native UiScrollable to scroll horizontally to the element.
+        """
+    try:
+        # UiScrollable syntax:
+        # 1. Select the scrollable container
+        # 2. Set direction to Horizontal
+        # 3. Scroll until the text is found
+        android_script = (
+            f'new UiScrollable(new UiSelector().resourceId("com.apnamart.apnaconsumer:id/categoryPaneList"))'
+            f'.setAsHorizontalList()'
+            f'.scrollIntoView(new UiSelector().text("{text}"))'
+        )
 
-    start_x = int(width * 0.8) #right part of the screen
-    end_x = int(width * 0.2) #left part of the screen
-    y = int(height * 0.25) #height of the screen from top
+        el = driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR, android_script)
+        return wait.until(EC.visibility_of(el))
 
-    max_swipes = 7 #maximum number of swipes to be done.
-
-    for i in range(max_swipes):
-        try:
-            el = driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR, f'new UiSelector().text("{text}")')
-            return wait.until(EC.visibility_of(el))
-        except NoSuchElementException:
-            # Swipe right
-            driver.swipe(start_x, y, end_x, y, 800)
-
-
-    raise Exception(f"Element with text '{text}' not found after {max_swipes} swipes")
+    except Exception as e:
+        raise Exception(f"Element with text '{text}' not found via UiScrollable. Error: {str(e)}")
 
 def clickOnCategoriesPane(wait, text):
 
