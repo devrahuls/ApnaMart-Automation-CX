@@ -3,13 +3,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.support.wait import WebDriverWait
 
-from scroll_down_until_find_an_element import scroll_down_to_find_an_element
+from scroll_until_find_an_element import scroll_down_to_find_an_element
 
 def spd_verification(driver, wait):
 
     # Scroll until we find the SPD Offer
     target_element = "com.apnamart.apnaconsumer:id/btn_add_products"
-    scroll_down_to_find_an_element(driver, target_element, 10)
+    scroll_down_to_find_an_element(driver, AppiumBy.ID, target_element, 10)
 
     # verify the whole single sku deals offer
     try:

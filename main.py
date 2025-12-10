@@ -2,6 +2,7 @@ from cart_page.view_cart import view_cart, qty_update, qty_updatee, verify_empty
 from driver_setup import get_driver, get_wait
 from Signup.login_flow import login_flow, custom_login
 from offers_and_coupons.Best_Deals.best_deals_main import best_deals_main
+from offers_and_coupons.Coupons.coupons_main import coupons_main
 from offers_and_coupons.Special_Price_Deals.spd_main import special_price_deals_main
 from offers_and_coupons.WholeSale.wholesale_main import wholesale_main
 from search_and_browse.search_and_add_to_cart_flow import search_and_add_to_cart_flow
@@ -30,14 +31,17 @@ if __name__ == "__main__":
 
     # category_navigation_main(driver, wait)
 
-    # item_name = 'murmure'
-    # search_and_add_to_cart_flow(wait, item_name)
-    # view_cart(wait)
+
+    item_name = 'murmure'
+    search_and_add_to_cart_flow(wait, item_name)
+    view_cart(wait)
     # best_deals_main(driver, wait)
     # search_and_browse_main(wait, item_name)
 
     # special_price_deals_main(driver, wait)
-    wholesale_main(driver, wait)
+    # wholesale_main(driver, wait)
+
+    coupons_main(driver, wait)
 
     # verify_cart_bar(driver, wait)
 

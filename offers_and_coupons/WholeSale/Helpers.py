@@ -7,6 +7,9 @@ import re
 
 
 def add_more_products_to_unlock_wh_cart(driver, wait, req_amt_to_unlock):
+    print(f'\n{req_amt_to_unlock} amt of item requires to unlock')
+    item_name = 'chips'
+    
     try:
         # Search for item
         search_bar = wait.until(EC.element_to_be_clickable((AppiumBy.ID,"com.apnamart.apnaconsumer:id/searchText")))
@@ -17,16 +20,15 @@ def add_more_products_to_unlock_wh_cart(driver, wait, req_amt_to_unlock):
     search_input = wait.until(
         EC.element_to_be_clickable((AppiumBy.ID, "com.apnamart.apnaconsumer:id/searchText"))
     )
-    search_input.send_keys('chips')
+    search_input.send_keys(item_name)
+    print(f'Start searching for {item_name}')
 
-    product_prices = []
-    product_prices = driver.find_elements(AppiumBy.ID, "com.apnamart.apnaconsumer:id/tvProductOfferPrice")
+    searched_product_prices = []
+    searched_product_prices = driver.find_elements(AppiumBy.ID, "com.apnamart.apnaconsumer:id/tvProductOfferPrice")
     currVal = 0
     number_of_product_to_add = 0
 
-    print(product_prices)
-
-    for price in product_prices:
+    for price in searched_product_prices:
         match = re.search(r'\d+', price.text) #convert price rs00 into plain numbers
         price_in_numbers = match.group(0)
         print(price_in_numbers)
@@ -35,22 +37,22 @@ def add_more_products_to_unlock_wh_cart(driver, wait, req_amt_to_unlock):
         if currVal > int(req_amt_to_unlock):
             break
 
-    print(number_of_product_to_add)
+    print(f'{number_of_product_to_add} products requires to be added to unlock')
 
-    add_buttons = driver.find_elements(
-        AppiumBy.ID,
-        "com.apnamart.apnaconsumer:id/btAddToCart"
-    )
+
     for i in range(number_of_product_to_add):
         try:
+            '''since everytime we add an item the screen has refreshed, and the new items which have add_btn active 
+            will become the 0th instance, hence everytime we add 0th instance item'''
             add_item = wait.until(EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR,
             f'new UiSelector().resourceId("com.apnamart.apnaconsumer:id/btAddToCart").instance(0)')))
-            print(i)
+            print(f'Adding {i+1} item...')
             add_item.click()
             time.sleep(0.75)
         except TimeoutException:
             pass
 
+    print(f'✅ Successfully added all {number_of_product_to_add} items of {req_amt_to_unlock} amt collectively.')
     view_cart(wait)
 
 

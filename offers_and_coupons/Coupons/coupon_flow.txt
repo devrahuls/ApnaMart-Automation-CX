@@ -1,0 +1,72 @@
+Test Flow with Stepwise:
+1. Apply a coupon that appears outside the coupon page.
+2. Verify the cart total.
+3. Tap View All to open the coupon page.
+4. Verify the layout of Available and Unavailable coupon cards.
+    - Create two coupons:
+        - Coupon A → MOV ₹1 with 10% off
+        - Coupon B → MOV ₹700 with 30% off up to ₹200
+5. From the Unavailable coupons section, fetch the amount required to unlock the coupon.
+6. Navigate back to the cart page.
+7. Go to the search page and add products worth the required amount to unlock the coupon.
+8. Tap View All again to open the coupon page.
+9. Apply the newly unlocked coupon.
+    1. This should automatically remove the previously applied coupon and set the new coupon as active.
+10. Verify that the “Apply Coupon” button is no longer visible outside the coupon page (i.e., on the cart page).
+11. Verify the cart total.
+12. Tap View All again to re-open the coupon page.
+13. Validate coupon page UI and functionality:
+    - Verify search with an invalid coupon → should show an error.
+    - Verify search with a valid coupon → coupon should be applied.
+14. Verify the coupon-applied prompt and its UI elements.
+15. Verify the cart total.
+16. Remove the applied coupon.
+17. Verify the cart total again.
+
+
+
+
+
+BDD Format:
+Feature: Coupon Application and Validation Flow
+  Validating coupon behavior, UI, search, unlock flow, and cart total updates.
+
+  Background:
+    Given two coupons exist:
+      | Coupon | MOV  | Discount              |
+      | A      | 1    | 10% off               |
+      | B      | 700  | 30% off up to ₹200    |
+
+  Scenario: End-to-end coupon application, unlocking, and validation
+    When I apply a coupon that is shown outside the coupon page
+    Then the cart total should be correct
+
+    When I click on "View All" to open the coupon page
+    Then I should see the correct layout for available and unavailable coupons
+
+    When I fetch the amount required to unlock an unavailable coupon
+    And I navigate back to the cart page
+    And I add products worth the required amount to unlock the coupon
+
+    When I click on "View All" to open the coupon page again
+    And I apply the newly unlocked coupon
+    Then the previously applied coupon should be removed
+    And the new coupon should be marked as applied
+
+    Then the "Apply Coupon" button should not be visible on the cart page
+    And the cart total should be correct
+
+    When I click on "View All" to open the coupon page again
+    Then all coupon page elements should be visible
+
+    When I search for an invalid coupon
+    Then an error message should be displayed
+
+    When I search for a valid coupon
+    Then the coupon should be applied
+
+    Then the coupon applied prompt and its elements should be visible
+    And the cart total should be correct
+
+    When I remove the applied coupon
+    Then the cart total should update correctly

@@ -4,16 +4,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from appium.webdriver.common.appiumby import AppiumBy
 
 
-# item_name = input("Enter the item name to search: ")
-
 def search_and_add_to_cart_flow(wait, item_name):
-    # com.apnamart.apnaconsumer: id / layout_top
-    # com.apnamart.apnaconsumer: id / mast_head_top
-
-    time.sleep(5)
 
     # This block waits for a stable homepage element *before*
-    # doing anything else.
     try:
         print("Waiting for homepage to be ready...")
         # Use a stable, static element ID from your homepage
@@ -21,27 +14,30 @@ def search_and_add_to_cart_flow(wait, item_name):
             EC.presence_of_element_located((AppiumBy.ID, "com.apnamart.apnaconsumer:id/masthead_top"))
         )
         print("✅ Homepage is stable.")
-
     except TimeoutException:
         print("🛑 Homepage never loaded or stable element not found. Stopping.")
-        raise  # Fail the test if the homepage isn't stable
-    # --- END OF FIX ---
+        raise  # Fail the test if the homepage isn't stable\
 
+    # Open the search page and make search bar active by clicking on it
     try:
-        # Search for item
         search_bar = wait.until(EC.element_to_be_clickable((AppiumBy.ID,
             "com.apnamart.apnaconsumer:id/searchText")))
         search_bar.click()
+        print('✅ Search Page has opened.')
     except:
-        print("No search bar found")
+        print("❌ No search bar found")
 
-    search_input = wait.until(
-        EC.element_to_be_clickable((AppiumBy.ID, "com.apnamart.apnaconsumer:id/searchText"))
-    )
-    search_input.send_keys(item_name)
+    # enter the name of the item to search for.
+    try:
+        search_input = wait.until(
+            EC.element_to_be_clickable((AppiumBy.ID, "com.apnamart.apnaconsumer:id/searchText"))
+        )
+        search_input.send_keys(item_name)
+    except TimeoutException:
+        print('No search bar found')
 
     # waiting time till the item got searched and add button is availabe to interact
-    time.sleep(1)
+    time.sleep(2)
 
     try:
         add_item = wait.until(EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR,

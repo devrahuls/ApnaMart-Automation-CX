@@ -62,7 +62,7 @@ def login_flow(driver, wait):
             # **CLICK AGAIN** to ensure the element has focus and the keyboard is active.
             phone_input_to_fill.click()
 
-            # sleep(0.5)
+            sleep(1)
 
             phone_input_to_fill.send_keys("9999999999")
 
