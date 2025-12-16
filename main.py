@@ -32,9 +32,9 @@ if __name__ == "__main__":
     # category_navigation_main(driver, wait)
 
 
-    item_name = 'murmure'
-    search_and_add_to_cart_flow(wait, item_name)
-    view_cart(wait)
+    # item_name = 'murmure'
+    # search_and_add_to_cart_flow(wait, item_name)
+    # view_cart(wait)
     # best_deals_main(driver, wait)
     # search_and_browse_main(wait, item_name)
 

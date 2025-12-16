@@ -70,3 +70,19 @@ Feature: Coupon Application and Validation Flow
 
     When I remove the applied coupon
     Then the cart total should update correctly
+
+
+
+
+Product Reward Coupon Flow:
+    1. search for an item and add to cart
+    2. open the cart
+    3. open coupon page
+    4. search and apply of the Product Reward coupon
+    5. Verify and Proceed with the Coupon Applied Prompt
+    5. go to the cart items layout
+    6. try to find coupon applied tag on the item on the cart.
+    7. fetch all products and thier respective selling price, and store it in A and B array
+    8. now, try to match the product reward's item with on the A, and get the B index value from the same index on which the reward's item get found on array A.
+    9. if yes, print success message
+    10. else, offer not applied

@@ -12,7 +12,7 @@ def view_cart(wait):
     # View cart
     try:
         view_cart_btn = wait.until(
-            EC.element_to_be_clickable((AppiumBy.ID, 'com.apnamart.apnaconsumer:id/viewCart'))
+            EC.presence_of_element_located((AppiumBy.ID, 'com.apnamart.apnaconsumer:id/viewCart'))
         )
         view_cart_btn.click()
         print('Opening Cart Page...')

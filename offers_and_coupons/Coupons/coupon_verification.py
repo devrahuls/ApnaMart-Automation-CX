@@ -6,8 +6,9 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from appium.webdriver.common.appiumby import AppiumBy
 import time
 from offers_and_coupons.WholeSale.Helpers import add_more_products_to_unlock_wh_cart
-from scroll_until_find_an_element import scroll_up_to_find_an_element
+from scroll_until_find_an_element import scroll_up_to_find_an_element, scroll_down_to_find_an_element
 from offers_and_coupons.Coupons.Helpers import scroll_until_found_coupon_section, calculate_cart_total
+from cart_page.view_cart import view_cart
 
 
 def coupon_verification_main(driver, main):
@@ -459,3 +460,156 @@ def verify_coupon_page(driver, wait):
         print('❌ Coupon Search Apply Button is NOT displaying')
 
     print('\n')
+
+
+
+def product_reward_coupon_verification(driver, wait):
+    print('\nProduct Reward Coupon Verification...')
+
+    '''
+    '''
+
+    scroll_until_found_coupon_section(driver, wait)
+
+    # verify view all btn
+    try:
+        view_all_btn = wait.until(
+            EC.presence_of_element_located((AppiumBy.XPATH, '//android.widget.TextView[@resource-id="view_all_offers_btn"]'))
+        )
+        view_all_btn.click()
+        print('Opens Coupon Page')
+    except NoSuchElementException:
+        print(f'❌ Coupon View All btn could not be found!')
+
+
+    # verify the Search Bar
+    print('--- Entering Coupon Code ---')
+    try:
+        coupon_search_input = wait.until(
+            EC.presence_of_element_located((AppiumBy.XPATH, '//android.widget.EditText[@resource-id="search_bar"]'))
+        )
+        print('Search Input (EditText) is found!')
+    except NoSuchElementException:
+        print('Search Input NOT Found!')
+
+    # Click it to activate the input
+    coupon_search_input.click()
+
+    # Send the input text to the now active EditText
+    coupon_search_input.send_keys('productrewardtesting00')
+    print('productrewardtesting00 Code has been Successfully Entered on Search Bar!')
+
+    # --- Apply Button Logic ---
+
+    # apply the coupon that have been searched
+    try:
+        search_coupon_apply_btn = wait.until(
+            EC.presence_of_element_located(
+                (AppiumBy.XPATH, '//android.view.View[@resource-id="apply_btn"]/android.widget.Button'))
+        )
+        search_coupon_apply_btn.click()
+        print('Coupon code has been successfully applied!')
+    except NoSuchElementException:
+        print('Apply btn could not be found!')
+
+
+    verify_coupon_applied_prompt(driver, wait)
+
+
+
+    deal_applied_locator = '//android.view.View[@resource-id="product deal applied tag"]'
+    scroll_down_to_find_an_element(driver, AppiumBy.XPATH, deal_applied_locator, 10)
+
+    desired_item_name = "Annapurna Ghee - 250ml"
+    desired_qty = "1"
+    desired_sp = "₹2"
+
+    # --- LOCATORS ---
+    LOCATOR_NAME = AppiumBy.XPATH, '//android.widget.TextView[@resource-id="product name"]'
+    LOCATOR_QTY = AppiumBy.XPATH, '(//android.widget.TextView[@resource-id="product quantity"])'
+    LOCATOR_SP = AppiumBy.XPATH, '//android.widget.TextView[@resource-id="product sp"]'
+
+    print(f"\n--- Verifying Product: {desired_item_name} ---")
+    print(f"Expected Qty: {desired_qty}, Expected SP: {desired_sp}")
+
+    # 1. GATHER ALL PRODUCT ATTRIBUTES
+    try:
+        # Get all element lists using presence_of_all_elements_located
+        name_elements = wait.until(
+            EC.presence_of_all_elements_located(LOCATOR_NAME)
+        )
+        qty_elements = wait.until(
+            EC.presence_of_all_elements_located(LOCATOR_QTY)
+        )
+        sp_elements = wait.until(
+            EC.presence_of_all_elements_located(LOCATOR_SP)
+        )
+
+        # Extract text into three lists
+        product_names = [el.text for el in name_elements]
+        product_quantities = [el.text for el in qty_elements]
+        product_sps = [el.text for el in sp_elements]
+
+        print(f"✅ Gathered data. Total items found: {len(product_names)}")
+
+        # Safety check: All lists must be of the same length
+        if not (len(product_names) == len(product_quantities) == len(product_sps)):
+            print("🛑 Error: The number of names, quantities, and prices do not match. Check your locators.")
+            print(f"Names: {len(product_names)}, Qty: {len(product_quantities)}, SP: {len(product_sps)}")
+            return  # Exit function
+
+    except TimeoutException:
+        print("🛑 Error: Not all product elements loaded within the timeout.")
+        return
+    except NoSuchElementException:
+        print("🛑 Error: One or more locator types failed to find any elements.")
+        return
+
+    # 2. LOOP OVER THE PRODUCT NAME ARRAY AND FIND THE DESIRED ITEM
+    found_index = -1
+    for index, name in enumerate(product_names):
+        if name.strip() == desired_item_name.strip():
+            found_index = index
+            break
+
+    # 3. CHECK IF THE ITEM WAS FOUND
+    if found_index == -1:
+        print(f"❌ FAIL: Desired item '{desired_item_name}' was not found in the product list.")
+        return
+
+    # 4. FETCH DETAILS AT THE FOUND INDEX
+
+    # Note: We assume the extracted text (including potential currency symbols, etc.)
+    # must match the desired_qty/sp string exactly.
+    actual_qty = product_quantities[found_index].strip()
+    actual_sp = product_sps[found_index].strip()
+
+    # 5. COMPARE DETAILS
+    is_qty_correct = actual_qty == desired_qty.strip()
+    is_sp_correct = actual_sp == desired_sp.strip()
+
+    if is_qty_correct and is_sp_correct:
+        print(f"\n🎉 SUCCESS: Item '{desired_item_name}' verified.")
+        print(f"   Quantity ({actual_qty}) and Price ({actual_sp}) are correct.")
+    else:
+        print(f"\n❌ FAIL: Details for '{desired_item_name}' are incorrect.")
+
+        # Detailed error message
+        if not is_qty_correct:
+            print(f"   Quantity Mismatch: Expected '{desired_qty}', Found '{actual_qty}'")
+        if not is_sp_correct:
+            print(f"   Price Mismatch: Expected '{desired_sp}', Found '{actual_sp}'")
+
+
+    # go back to the HP
+    try:
+        back_btn_to_HP = wait.until(
+            EC.presence_of_element_located((AppiumBy.ID, 'com.apnamart.apnaconsumer:id/back_img'))
+        )
+        back_btn_to_HP.click()
+        print('Opens Home Page')
+    except NoSuchElementException:
+        print(f'❌ Back btn could not be found!')
+
+    time.sleep(2) #to let the HP stable
+    view_cart(driver)

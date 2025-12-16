@@ -144,7 +144,6 @@ def calculate_cart_total(driver, wait):
 
     # If the cart total section is not present on the current screen then start the scrolling down until found
     to_pay = 'new UiSelector().text("To Pay")'
-    # scroll_down_to_find_an_element(driver, wait, AppiumBy.ANDROID_UIAUTOMATOR, to_pay, 5)
     scroll_down_to_find_an_element(driver, AppiumBy.ANDROID_UIAUTOMATOR, to_pay, 10)
 
     # collect the bill items and their values
