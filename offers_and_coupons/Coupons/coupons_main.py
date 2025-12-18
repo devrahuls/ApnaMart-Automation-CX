@@ -11,10 +11,9 @@ def coupons_main(driver, wait):
     search_and_add_to_cart_flow(wait, item_name)
     view_cart(wait)
 
-
     product_reward_coupon_verification(driver, wait)
 
-    # coupon_verification_main(driver, wait)
+    coupon_verification_main(driver, wait)
 
 
 

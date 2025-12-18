@@ -1,7 +1,11 @@
+import time
+
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
+from cart_page.Helpers import review_cart_item_verification
+from cart_page.view_cart import view_cart
 
 
 # Assume 'driver' is your initialized Appium driver
@@ -107,9 +111,6 @@ def verify_cart_bar(driver, wait):
 
     print("--- Verification Complete ---")
 
-# --- Example Usage ---
-# You would call this function in your test script
-# verify_cart_bar()
 
 
 def verify_small_review_cart_one_item(wait):
@@ -149,6 +150,8 @@ def verify_small_review_cart_more_item(wait):
 
 
 def review_cart_verification(wait):
+    print("\n\n--- Starting Review Cart Flow ---")
+
     bottom_cart = wait.until(
         EC.element_to_be_clickable((AppiumBy.ID, 'com.apnamart.apnaconsumer:id/cartItemsCount'))
     )
@@ -159,38 +162,112 @@ def review_cart_verification(wait):
     review_cart_text = wait.until(
         EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Review Cart")'))
     )
-    print(f'{review_cart_text.text} is available.')
+    print(f'✅ {review_cart_text.text} text heading is available.')
 
     #store status
     store_status = wait.until(
         EC.element_to_be_clickable((AppiumBy.ID, 'com.apnamart.apnaconsumer:id/tv_delivering_in'))
     )
-    print(f'Store is currently in {store_status.text} status')
+    print(f'✅ Store is currently in {store_status.text} status')
 
     #  All items count verification on the review cart
-    items_count = wait.until(
+    total_items_count_and_amt = wait.until(
         EC.element_to_be_clickable((AppiumBy.ID, 'com.apnamart.apnaconsumer:id/tv_review_cart'))
     )
-    print(f'{items_count.text} are in the cart.')
+    print(f'Total {total_items_count_and_amt.text} are in the cart.')
+
+    # verify that the items that have been addded from the search page is same displaying on the review cart
+    review_cart_item_verification(wait)
 
 
-    # quantity counts verification on item(s)
-    qty_count_item0 = wait.until(
-        EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("com.apnamart.apnaconsumer:id/tvCount").instance(0)'))
-    )
-    print(f'{qty_count_item0.text} qty of first item in the cart.')
+    print("\n--- Review Cart Verification & Modification ---")
 
-    # try:
-    #     increase_qty_item0 = wait.until(
-    #         EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("com.apnamart.apnaconsumer:id/tvCount").instance(0)'))
-    #     )
-    # except:
-    #     print()
+    # ... (Your existing code to open bottom sheet and verify store status) ...
+
+    # 1. Update Quantity of the first two items
+    # We increase them by clicking the '+' button once for each
+    updated_items = {}  # Store {Product Name: Expected Qty}
+
+    for i in range(1, 3):  # XPath index 1 and 2
+        try:
+            name_xpath = f'(//android.widget.TextView[@resource-id="com.apnamart.apnaconsumer:id/productName"])[{i}]'
+            plus_btn_xpath = f'(//android.widget.Button[@resource-id="com.apnamart.apnaconsumer:id/btAdd"])[{i}]'
+            qty_xpath = f'(//android.widget.TextView[@resource-id="com.apnamart.apnaconsumer:id/tvCount"])[{i}]'
+
+            item_name = wait.until(EC.presence_of_element_located((AppiumBy.XPATH, name_xpath))).text
+            plus_btn = wait.until(EC.element_to_be_clickable((AppiumBy.XPATH, plus_btn_xpath)))
+
+            plus_btn.click()
+            time.sleep(1)  # Wait for UI to update qty
+
+            new_qty = wait.until(EC.presence_of_element_located((AppiumBy.XPATH, qty_xpath))).text
+            updated_items[item_name] = new_qty
+            print(f"➕ Updated '{item_name}' to quantity: {new_qty}")
+        except Exception as e:
+            print(f"❌ Failed to update item {i}: {e}")
+
+    # 2. Remove the next two items
+    # Note: When you remove item #3, the old item #4 usually becomes the new item #3.
+    # To be safe, we always click the '-' button on index 3 until it disappears.
+    removed_items_names = []
+    for _ in range(2):
+        try:
+            # Capture name of the item we are about to remove
+            name_to_remove = wait.until(EC.presence_of_element_located((AppiumBy.XPATH,
+                                                                        '(//android.widget.TextView[@resource-id="com.apnamart.apnaconsumer:id/productName"])[3]'))).text
+
+            minus_btn = wait.until(EC.element_to_be_clickable((AppiumBy.XPATH,
+                                                               '(//android.widget.Button[@resource-id="com.apnamart.apnaconsumer:id/btMinus"])[3]')))
+
+            # Assuming clicking minus when qty is 1 removes the item
+            minus_btn.click()
+            removed_items_names.append(name_to_remove)
+            print(f"🗑️ Removed item: {name_to_remove}")
+            time.sleep(1)
+        except Exception as e:
+            print(f"❌ Failed to remove an item: {e}")
+
+    # 3. Open the full Cart Page
+    view_cart(wait)
+
+    # 4. Final Verification on Cart Page
+    verify_final_cart_page(wait, updated_items, removed_items_names)
 
 
+def verify_final_cart_page(wait, expected_updates, removed_names):
+    print("\n--- Final Verification on Cart Page ---")
 
+    try:
+        # Find all current products on the cart page
+        current_names = wait.until(EC.presence_of_all_elements_located((AppiumBy.XPATH,
+                                                                        '//android.widget.TextView[@resource-id="product name"]')))
+        current_qtys = wait.until(EC.presence_of_all_elements_located((AppiumBy.XPATH,
+                                                                       '//android.widget.TextView[@resource-id="product quantity"]')))
 
+        # Convert to a dictionary for easy comparison
+        actual_cart_state = {}
+        for name_el, qty_el in zip(current_names, current_qtys):
+            actual_cart_state[name_el.text] = qty_el.text
 
+        # CHECK 1: Verify Updated Quantities
+        for name, expected_qty in expected_updates.items():
+            if name in actual_cart_state:
+                if actual_cart_state[name] == expected_qty:
+                    print(f"✅ MATCH: '{name}' has correct qty {expected_qty}")
+                else:
+                    print(f"❌ MISMATCH: '{name}' expected {expected_qty} but found {actual_cart_state[name]}")
+            else:
+                print(f"❌ ERROR: Updated item '{name}' not found on Cart Page!")
+
+        # CHECK 2: Verify Removal
+        for name in removed_names:
+            if name in actual_cart_state:
+                print(f"❌ FAILURE: Removed item '{name}' is still present in cart!")
+            else:
+                print(f"✅ SUCCESS: Item '{name}' is correctly absent from cart.")
+
+    except Exception as e:
+        print(f"❌ Verification failed: {e}")
 
 
 

@@ -1,0 +1,47 @@
+#HIGH LEVEL FLOW:
+REVIEW CART VERIFICATION
+VIEW CART
+FROM CART PAGE - SEARCH AND ADD TO CART VERIFICATION
+VERIFY THAT THE ITEM HAS ADDED ON CART FROM SEARCH IS DISPLAYING - CORRECT NAME, PRICE, QTY
+ITEM QTY UPDATE VERIFICATION ON CART PAGE
+EMPTY CART VERIFICATION
+CART TOGGLE VERIFICATION
+REFUND AND CANCELLATION BOTTOMSHEET VERIFICATION
+PLACE ORDER
+
+
+
+#LOW LEVEL FLOW:
+- Search and Data Capture (Item 1):
+  Search for the first item, record its name, quantity, and price, then verify these details match on the floating review cart bar.
+- Search and Data Capture (Item 2):
+  Search for the second item, record its details, and verify the update on the review cart bar.
+- Search and Data Capture (Item 3):
+  Search for the third item, record its details, and verify the update on the review cart bar.
+- Search and Data Capture (Item 4):
+  Search for the fourth item, record its details, and verify the update on the review cart bar.
+
+- Review Cart Verification: Open the review cart and perform a full comparison to ensure every added item displays the correct name,
+  price, and quantity.
+- Quantity Sync Test: Update the quantity of items within the review cart and verify that the same quantities are reflected for those
+  specific items on the main cart page.
+
+- Real-time Cart Update: Go to search page from the cart page, add a new item, and verify it appears on the cart page with the correct
+  details immediately.
+- Bulk Quantity Increase: Loop through all items on the cart page and increase their quantities to verify the counter and price
+  calculations function for the entire list.
+- Empty Cart Logic: Systematically remove all items from the cart by clicking the "minus" button until the empty cart screen
+  (`emptyView`) appears.
+
+- Homepage Recovery: Click the "Start Shopping" button from the empty cart screen and verify it redirects you to the Homepage.
+- Cart Restoration: Return to the search page and add an item to ensure the cart page is active again for further testing.
+
+- Scroll to Bill Details: Scroll down the cart page until the "Cart Toggle" (Bill Summary) component is found and visible.
+- Toggle Integrity Check: Capture the bill values (total, taxes, etc.), interact with the toggle, and verify that all values
+  remain identical before and after the toggle.
+- Policy Verification: Open and verify the "Cancellation & Refund Policy" bottom sheet content.
+
+- Address Management: Click the "Change" button above the "Place Order" CTA, search for a delivery address - 'apnamart corporate office'
+  to assign DEMO store, and save it with 'Test00' name.
+- Payment & Finalization: Click on the Method of Payment (MOP) 'Select Payment Mode' button, then on MOP page select the COD option,
+  confirm and redirect to the cart page click "Place Order," and verify the order confirmation bottom sheet appears.

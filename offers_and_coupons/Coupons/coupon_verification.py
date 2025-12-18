@@ -466,9 +466,6 @@ def verify_coupon_page(driver, wait):
 def product_reward_coupon_verification(driver, wait):
     print('\nProduct Reward Coupon Verification...')
 
-    '''
-    '''
-
     scroll_until_found_coupon_section(driver, wait)
 
     # verify view all btn
@@ -611,5 +608,15 @@ def product_reward_coupon_verification(driver, wait):
     except NoSuchElementException:
         print(f'❌ Back btn could not be found!')
 
-    time.sleep(2) #to let the HP stable
-    view_cart(driver)
+    view_cart(wait)
+
+    scroll_until_found_coupon_section(driver, wait)
+
+    try:
+        coupon_remove_btn_from_cart = wait.until(
+            EC.presence_of_element_located( (AppiumBy.XPATH, '//android.view.View[@resource-id="remove_btn"]/android.widget.Button'))
+        )
+        coupon_remove_btn_from_cart.click()
+        print('\n✅ Coupon Removed Successfully!')
+    except TimeoutException:
+        print('❌ Coupon Remove Button could not be found!')

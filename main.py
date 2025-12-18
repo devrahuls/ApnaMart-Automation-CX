@@ -1,4 +1,4 @@
-from cart_page.view_cart import view_cart, qty_update, qty_updatee, verify_empty_cart
+# from cart_page.view_cart import view_cart, qty_update, qty_updatee, verify_empty_cart
 from driver_setup import get_driver, get_wait
 from Signup.login_flow import login_flow, custom_login
 from offers_and_coupons.Best_Deals.best_deals_main import best_deals_main
@@ -27,7 +27,7 @@ if __name__ == "__main__":
     # address = input("Enter address: ")
     store_assignment(driver, wait, "apnamart corporate office")
 
-    # cart_main(driver,  wait)
+    cart_main(driver,  wait)
 
     # category_navigation_main(driver, wait)
 
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     # special_price_deals_main(driver, wait)
     # wholesale_main(driver, wait)
 
-    coupons_main(driver, wait)
+    # coupons_main(driver, wait)
 
     # verify_cart_bar(driver, wait)
 

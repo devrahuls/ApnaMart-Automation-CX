@@ -4,15 +4,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from scroll_until_find_an_element import scroll_down_to_find_an_element
 
-
+'''
+TODO: this function is just a blueprint, need to add the actual values.
+'''
 def verify_cart_bill_toggle(driver, wait: WebDriverWait):
     """
     Verifies that the cart bill attributes and values are preserved
     when the cart bill is toggled (hidden and then revealed).
-
-    Args:
-        driver: The Appium WebDriver instance.
-        wait: The WebDriverWait instance for explicit waits.
     """
 
     # --- LOCATORS ---

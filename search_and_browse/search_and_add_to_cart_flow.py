@@ -24,7 +24,7 @@ def search_and_add_to_cart_flow(wait, item_name):
             "com.apnamart.apnaconsumer:id/searchText")))
         search_bar.click()
         print('✅ Search Page has opened.')
-    except:
+    except TimeoutException:
         print("❌ No search bar found")
 
     # enter the name of the item to search for.

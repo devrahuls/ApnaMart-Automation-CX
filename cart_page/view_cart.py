@@ -1,8 +1,4 @@
-from selenium.webdriver.support import expected_conditions as EC
 from appium.webdriver.common.appiumby import AppiumBy
-
-from appium.webdriver.common.appiumby import AppiumBy
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 
@@ -91,22 +87,3 @@ def qty_updatee(driver, wait):
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-
-
-def verify_empty_cart(wait):
-    qty_minus = wait.until(
-        EC.element_to_be_clickable((AppiumBy.ID, 'com.apnamart.apnaconsumer:id/btMinus'))
-    )
-    qty_minus.click()
-
-    cart_empty = wait.until(
-        EC.element_to_be_clickable((AppiumBy.ID, 'com.apnamart.apnaconsumer:id/noItemsText'))
-    )
-    print(f'✅ {cart_empty.text} text is available!')
-
-    start_shopping_home_btn = wait.until(
-        EC.element_to_be_clickable((AppiumBy.ID, 'com.apnamart.apnaconsumer:id/homeButton'))
-    )
-    start_shopping_home_btn.click()
-
-    print('✅ Empty cart is working fine, successfully redirected to home page after clicking start shopping btn.')

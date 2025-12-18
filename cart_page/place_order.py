@@ -5,6 +5,12 @@ from appium.webdriver.common.appiumby import AppiumBy
 
 def place_order_cod(driver, wait, address):
 
+    '''
+        prerequisite:
+            At least one item should be Added To Cart, open the cart page.
+            The selected address store should be Online.
+    '''
+
     try:
         add_delivery_address = wait.until(
             EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Add Delivery Address")'))
