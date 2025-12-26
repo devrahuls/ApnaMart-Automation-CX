@@ -26,7 +26,7 @@ def login_flow(driver, wait):
         language_selection_button.click()
 
         # remove the update request bottomsheet
-        remove_update_app_bottomsheet(driver)
+        # remove_update_app_bottomsheet(driver)
 
         # Truecaller flow
         try:
@@ -84,7 +84,7 @@ def login_flow(driver, wait):
         )
         notification_permission_btn.click()
 
-        remove_update_app_bottomsheet(driver)
+        # remove_update_app_bottomsheet(driver)
 
         print("✅ Login flow completed.")
 

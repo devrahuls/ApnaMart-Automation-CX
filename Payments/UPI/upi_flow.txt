@@ -1,0 +1,44 @@
+go to search page → add items worth `MIN_AMT_REQUIRED_TO_PLACE_ORDER`
+go to cart page
+gather the to pay amt
+click on add delivery address btn - and save the address
+click on select payment mode btn - and go to Select Payment Mode page
+if UPI IDs exists:
+delete all
+and skip the delete flow which was going to run
+Add your UPI add - lala@haha , click on verify& select btn
+
+go to select payment mode page again
+click on edit button - and go to manage payment bottomsheet
+click on the bin btn against the haha@lala upi id
+on the confirm deletion prompt click on the ‘dont delete’
+verify that the upi id haha@lala is showing on the select payment mode page
+
+— DELETE FLOW START —
+then again click on edit button - and go to manage payment bottomsheet
+click on the bin btn against the haha@lala upi id
+on the confirm deletion prompt click on the ‘delete’
+verify that the upi id haha@lala is not showing on the select payment mode page
+Add your UPI add - lala@haha , click on verify& select btn
+— DELETE FLOW END —
+
+click on the place order from cart page
+the place order bottomsheet should appear
+payment failed bottomsheet should appear
+retry online
+again payment failed bottomsheet should appear
+
+close the bottomsheet
+go to select payment mode page
+add your upi add - guptarahulm2016@oksbi, and  initiate the payment,
+verify and select
+on the payment failed bottomsheet click on the pay on delivery
+order should be placed as cod - redirected to the Track order page
+
+Post Order Payment:
+select wrong upi id and inititate payment
+should get redirected to the track order page with a`payment_failed_higlight`
+verify retry btn
+select correct upi id and initiate the payment
+should open the polling page, verify this page
+cancel the txn

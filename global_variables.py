@@ -1,0 +1,5 @@
+WRONG_UPI = 'haha@lala'
+CORRECT_UPI = 'ENTER YOU UPI ID'
+MIN_AMT_REQUIRED_TO_PLACE_ORDER = 150
+STORE_ADDRESS = 'apnamart corporate office'
+SECOND_WRONG_UPI = 'lala@haha'

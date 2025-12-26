@@ -3,8 +3,35 @@ import time
 from selenium.webdriver.support import expected_conditions as EC
 from appium.webdriver.common.appiumby import AppiumBy
 
-def place_order_cod(driver, wait, address):
 
+
+def place_order_cod(driver, wait):
+    time.sleep(5)
+
+    # Payment selection
+    payment_mode_btn = wait.until(
+        EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Select Payment Mode")'))
+    )
+    payment_mode_btn.click()
+
+    cod_option = wait.until(
+        EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Cash On Delivery")'))
+    )
+    cod_option.click()
+
+    confirm_btn = wait.until(EC.element_to_be_clickable((AppiumBy.CLASS_NAME, "android.widget.Button")))
+    confirm_btn.click()
+
+    place_order_btn = wait.until(EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR,
+                                                             'new UiSelector().text("Place Order")')))
+    place_order_btn.click()
+
+    print("Order is placing via COD")
+    print("✅ View Cart & Place Order Flow Completed.")
+
+
+
+def save_address_and_assign_store_from_cart(driver, wait, STORE_ADDRESS):
     '''
         prerequisite:
             At least one item should be Added To Cart, open the cart page.
@@ -12,10 +39,10 @@ def place_order_cod(driver, wait, address):
     '''
 
     try:
-        add_delivery_address = wait.until(
+        add_delivery_address_btn = wait.until(
             EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Add Delivery Address")'))
         )
-        add_delivery_address.click()
+        add_delivery_address_btn.click()
 
         confirm_address_btn = wait.until(
             EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR,
@@ -36,7 +63,7 @@ def place_order_cod(driver, wait, address):
         set_address_search = wait.until(
             EC.element_to_be_clickable((AppiumBy.ID, "com.apnamart.apnaconsumer:id/searchText"))
         )
-        set_address_search.send_keys(address)
+        set_address_search.send_keys(STORE_ADDRESS)
 
         first_search_result = wait.until(
             EC.element_to_be_clickable((AppiumBy.ID, "com.apnamart.apnaconsumer:id/tvCategory"))
@@ -74,26 +101,3 @@ def place_order_cod(driver, wait, address):
 
     except:
         pass
-
-    time.sleep(5)
-
-    # Payment selection
-    payment_mode_btn = wait.until(
-        EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Select Payment Mode")'))
-    )
-    payment_mode_btn.click()
-
-    cod_option = wait.until(
-        EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Cash On Delivery")'))
-    )
-    cod_option.click()
-
-    confirm_btn = wait.until(EC.element_to_be_clickable((AppiumBy.CLASS_NAME, "android.widget.Button")))
-    confirm_btn.click()
-
-    place_order_btn = wait.until(EC.element_to_be_clickable((AppiumBy.ANDROID_UIAUTOMATOR,
-                                                             'new UiSelector().text("Place Order")')))
-    place_order_btn.click()
-
-    print("Order is placing via COD")
-    print("✅ View Cart & Place Order Flow Completed.")

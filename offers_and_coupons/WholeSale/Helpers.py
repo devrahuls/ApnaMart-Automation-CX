@@ -8,20 +8,23 @@ import re
 
 def add_more_products_to_unlock_wh_cart(driver, wait, req_amt_to_unlock):
     print(f'\n{req_amt_to_unlock} amt of item requires to unlock')
-    item_name = 'chips'
+    item_name = 'chocolate'
     
     try:
         # Search for item
         search_bar = wait.until(EC.element_to_be_clickable((AppiumBy.ID,"com.apnamart.apnaconsumer:id/searchText")))
         search_bar.click()
-    except:
-        print("No search bar found")
 
-    search_input = wait.until(
-        EC.element_to_be_clickable((AppiumBy.ID, "com.apnamart.apnaconsumer:id/searchText"))
-    )
-    search_input.send_keys(item_name)
-    print(f'Start searching for {item_name}')
+        time.sleep(1)
+
+        search_input = wait.until(
+            EC.element_to_be_clickable((AppiumBy.ID, "com.apnamart.apnaconsumer:id/searchText"))
+        )
+        search_input.send_keys(item_name)
+        print(f'Start searching for {item_name}')
+    except Exception as e:
+        print(f"No search bar found {e}")
+
 
     searched_product_prices = []
     searched_product_prices = driver.find_elements(AppiumBy.ID, "com.apnamart.apnaconsumer:id/tvProductOfferPrice")

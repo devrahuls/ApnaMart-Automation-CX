@@ -1,7 +1,6 @@
 import time
 from selenium.common.exceptions import WebDriverException, NoSuchElementException
 
-
 def scroll_down_to_find_an_element(driver, by, locator, max_scrolls):
     """
     Scrolls down the screen until an element with the 'btn_add_products' ID is found,
@@ -125,3 +124,39 @@ def scroll_up_to_find_an_element(driver, by, locator, max_scrolls):
 
     # If not found after all scrolls or stopped by end-of-page check
     raise NoSuchElementException(f"Element not found after {max_scrolls} scrolls: {by} -> {locator}")
+
+
+def scroll_till_end_of_page(driver, max_scrolls):
+
+        print("--- Starting scroll to bottom ---")
+
+        last_page_source = ""
+        scroll_count = 0
+
+        while scroll_count < max_scrolls:
+            # 1. Capture the current page state
+            current_page_source = driver.page_source
+
+            # 2. Check if the page source is the same as the last scroll
+            if current_page_source == last_page_source:
+                print(f"✅ Reached the bottom of the page after {scroll_count} scrolls.")
+                break
+
+            # 3. Update the tracking variable
+            last_page_source = current_page_source
+
+            # 4. Perform the scroll action (Swipe from 80% to 20% of screen height)
+            size = driver.get_window_size()
+            start_x = size['width'] // 2
+            start_y = int(size['height'] * 0.8)
+            end_x = size['width'] // 2
+            end_y = int(size['height'] * 0.2)
+
+            driver.swipe(start_x, start_y, end_x, end_y, 600)
+
+            # 5. Incremental pause to let new items load
+            time.sleep(1.5)
+            scroll_count += 1
+            print(f"Scrolling... ({scroll_count})")
+        else:
+            print("⚠️ Reached the max_scrolls limit before finding the absolute bottom.")

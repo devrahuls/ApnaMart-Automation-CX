@@ -126,7 +126,7 @@ def coupon_section_verification(driver, wait):
         print('❌ No Search Icon found on Cart Page')
 
     # call the function that add only that amt of item that requires to unlock the coupon
-    add_more_products_to_unlock_wh_cart(driver, wait, 700)
+    add_more_products_to_unlock_wh_cart(driver, wait, 800)
 
     # TRY TO APPLY THE UNLOCKED COUPON
     # scroll from top to down to find the coupon section
@@ -220,8 +220,11 @@ def coupon_section_verification(driver, wait):
     if wrong_coupon_code_error.is_displayed:
         print('✅ Incorrect Coupon Code Found! - EXPECTED')
 
+    time.sleep(1)
 
     coupon_search_input.clear() #To clr the previous entered text on the coupon search
+
+    time.sleep(2)
 
     # apply a valid coupon
     coupon_search_input.send_keys('sbicc222')
@@ -508,6 +511,7 @@ def product_reward_coupon_verification(driver, wait):
         print('Coupon code has been successfully applied!')
     except NoSuchElementException:
         print('Apply btn could not be found!')
+
 
 
     verify_coupon_applied_prompt(driver, wait)

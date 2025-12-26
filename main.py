@@ -12,6 +12,37 @@ from category_navigation.pdp import share_product, pdp, product_attributes
 from cart_page.review_cart import verify_cart_bar
 from cart_page.cart_main import cart_main
 from category_navigation.category_navigation_main import category_navigation_main
+from Payments.payments_main import payments_main
+from cart_page.view_cart import view_cart
+from track_order_page import ongoing_track_order_page_verification
+
+from selenium.webdriver.support import expected_conditions as EC
+from appium.webdriver.common.appiumby import AppiumBy
+
+def disable_android_animations():
+    import subprocess
+
+    commands = [
+        ["adb", "shell", "settings", "put", "global", "window_animation_scale", "0"],
+        ["adb", "shell", "settings", "put", "global", "transition_animation_scale", "0"],
+        ["adb", "shell", "settings", "put", "global", "animator_duration_scale", "0"],
+    ]
+
+    for cmd in commands:
+        subprocess.run(cmd, check=True)
+
+def enable_android_animations():
+    import subprocess
+
+    commands = [
+        ["adb", "shell", "settings", "put", "global", "window_animation_scale", "1"],
+        ["adb", "shell", "settings", "put", "global", "transition_animation_scale", "1"],
+        ["adb", "shell", "settings", "put", "global", "animator_duration_scale", "1"],
+    ]
+
+    for cmd in commands:
+        subprocess.run(cmd, check=True)
+
 
 
 
@@ -19,15 +50,34 @@ if __name__ == "__main__":
     driver = get_driver()
     wait = get_wait(driver)
 
-
+    disable_android_animations()
     # Run whichever flows you want
     login_flow(driver, wait)  #MUST
     # custom_login(driver,wait)
 
+    enable_android_animations()
+
     # address = input("Enter address: ")
     store_assignment(driver, wait, "apnamart corporate office")
 
+
+    # CART PAGE, COUPONS, UPI FAIL, POST ORDER: PAYMENT & TRACK ORDER.
     cart_main(driver,  wait)
+    ongoing_track_order_page_verification(driver, wait)
+    back_to_hp_from_track_order = wait.until(
+        EC.presence_of_element_located(
+            (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().description("Navigate up")'))
+    )
+    back_to_hp_from_track_order.click()
+    coupons_main(driver, wait)
+    back_to_hp_from_cart = wait.until(
+        EC.presence_of_element_located(
+            (AppiumBy.ID, 'com.apnamart.apnaconsumer:id/back_img'))
+    )
+    back_to_hp_from_cart.click()
+    payments_main(driver, wait)
+    ongoing_track_order_page_verification(driver, wait)
+
 
     # category_navigation_main(driver, wait)
 
@@ -36,12 +86,17 @@ if __name__ == "__main__":
     # search_and_add_to_cart_flow(wait, item_name)
     # view_cart(wait)
     # best_deals_main(driver, wait)
+
     # search_and_browse_main(wait, item_name)
 
     # special_price_deals_main(driver, wait)
     # wholesale_main(driver, wait)
 
-    # coupons_main(driver, wait)
+
+
+
+
+
 
     # verify_cart_bar(driver, wait)
 

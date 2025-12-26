@@ -3,7 +3,7 @@ from appium.webdriver.common.appiumby import AppiumBy
 from cart_page.bulk_item_qty_update import bulk_item_qty_update
 from cart_page.cancellation_and_refund import cancellation_and_refund_policy
 from cart_page.empty_cart import empty_cart_flow
-from cart_page.place_order import place_order_cod
+from cart_page.place_order import place_order_cod, save_address_and_assign_store_from_cart
 from cart_page.review_cart import verify_small_review_cart_one_item, verify_small_review_cart_two_item, verify_small_review_cart_more_item, review_cart_verification
 from cart_page.Helpers import search_and_gather_data_add_to_cart
 from cart_page.search_page_cart_page_interaction import search_page_cart_page_interaction
@@ -11,6 +11,7 @@ from search_and_browse.search_and_add_to_cart_flow import search_and_add_to_cart
 from cart_page.view_cart import view_cart
 from cart_page.cart_toggle import verify_cart_bill_toggle
 from scroll_until_find_an_element import scroll_down_to_find_an_element
+from global_variables import STORE_ADDRESS
 
 
 def cart_main(driver, wait):
@@ -58,12 +59,7 @@ def cart_main(driver, wait):
 
     cancellation_and_refund_policy(driver, wait)
 
-    place_order_cod(driver, wait, 'apnamart corporate office' )
-
-
-
-
-
-
+    save_address_and_assign_store_from_cart(driver, wait, STORE_ADDRESS)
+    place_order_cod(driver, wait)
 
 
